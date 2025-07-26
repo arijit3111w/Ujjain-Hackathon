@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom styling for Leaflet Popups */
+.custom-popup-container .leaflet-popup-content-wrapper {
+  border-radius: 8px; /* Slightly rounded corners */
+  padding: 0; /* Remove default padding to let image fill */
+  overflow: hidden; /* Ensure image corners are also rounded */
+}
+
+.custom-popup-container .leaflet-popup-content {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  text-align: center; /* Center content within popup */
+}
+
+.custom-popup-container .leaflet-popup-tip-container {
+  /* You can adjust the tip if needed, but often default is fine */
+}
+
+.popup-image {
+  width: 100%; /* Make image fill the width of the popup */
+  height: 120px; /* Fixed height for consistency, adjust as needed */
+  object-fit: cover; /* Cover the area, cropping if necessary */
+  border-top-left-radius: 8px; /* Match popup border radius */
+  border-top-right-radius: 8px; /* Match popup border radius */
+  margin-bottom: 8px; /* Space between image and text */
+}
+
+/* Ensure the text content within the popup looks good */
+.custom-popup-container .p-2 {
+  padding: 16px; /* Re-add padding specifically for the text content */
+  box-sizing: border-box; /* Include padding in width calculation */
+}

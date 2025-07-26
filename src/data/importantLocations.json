@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Ram Ghat",
+    "type": "ghat",
+    "coords": [23.188590, 75.764980],
+    "description": "One of the main bathing ghats on the banks of the Shipra River, famous for the Kumbh Mela. Pilgrims believe a sacred dip here cleanses sins and brings spiritual merit.",
+    "imageKey": "RamGhat",
+    "vipAccess": false
+  },
+  {
+    "name": "Mahakaleshwar Temple",
+    "type": "temple",
+    "coords": [23.18278, 75.76833],
+    "description": "This ancient temple houses one of the twelve Jyotirlingas, revered as the most sacred abodes of Lord Shiva. It's believed to be self-manifested (svayambhu).",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Mahakaleshwar_Temple_Ujjain.jpg",
+    "vipAccess": false
+  },
+  {
+    "name": "Harsiddhi Temple",
+    "type": "temple",
+    "coords": [23.184544, 75.76475],
+    "description": "A historic temple dedicated to Goddess Harsiddhi, a powerful form of Annapurna. It is one of the 51 Shakti Peeths, significant for devotees seeking divine blessings.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Harsiddhi_Temple%2C_Ujjain.jpg",
+    "vipAccess": false
+  },
+  {
+    "name": "Triveni Ghat",
+    "type": "ghat",
+    "coords": [23.12889, 75.79306],
+    "description": "The sacred confluence of three rivers: Shipra, Saraswati (mythical), and Khan. It's a major bathing spot during Snan days and offers a serene atmosphere.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Triveni_Ghat_Rishikesh.jpg/1280px-Triveni_Ghat_Rishikesh.jpg",
+    "vipAccess": false
+  },
+  {
+    "name": "VIP Parking Zone A",
+    "type": "parking",
+    "coords": [23.1750, 75.7800],
+    "description": "Designated VIP parking area offering convenient access for special guests. This zone helps streamline vehicle movement during peak times.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Parking_lot_at_Chetpet_lake_in_Chennai.jpg",
+    "vipAccess": false
+  },
+  {
+    "name": "Public Parking Zone B",
+    "type": "parking",
+    "coords": [23.1850, 75.7900],
+    "description": "Large parking area serving the general public and pilgrims, designed to accommodate a high volume of vehicles and reduce city congestion.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Parking_Area%2C_Chandigarh.jpg",
+    "vipAccess": false
+  },
+  {
+    "name": "Central Medical Camp",
+    "type": "medical",
+    "coords": [23.1802, 75.7823],
+    "description": "The main medical facility equipped for emergencies, providing essential healthcare services and first aid to all visitors and pilgrims.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Medical_Camp_%284%29.jpg/1280px-Medical_Camp_%284%29.jpg",
+    "vipAccess": false
+  },
+  {
+    "name": "Sector 4 Medical Point",
+    "type": "medical",
+    "coords": [23.1765, 75.7871],
+    "description": "A satellite medical help point located strategically to offer quick medical assistance within walking distance of key areas.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Medical_Camp_%284%29.jpg/1280px-Medical_Camp_%284%29.jpg",
+    "vipAccess": false
+  }
+]
