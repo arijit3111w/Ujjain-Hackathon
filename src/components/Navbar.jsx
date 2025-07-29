@@ -4,14 +4,16 @@ import { MapPin, Menu, X, User, Settings, LogOut, ChevronDown, Crown, ShieldChec
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 import VipAuthModal from './VipAuthModal';
+import { useTranslation } from 'react-i18next'; // 1. Import useTranslation
 
 const Navbar = () => {
+    const { t, i18n } = useTranslation(); // 2. Initialize the hook
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isVipAuthModalOpen, setIsVipAuthModalOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
-    const [language, setLanguage] = useState('EN');
+    // const [language, setLanguage] = useState('EN'); // 3. REMOVE old language state
     const location = useLocation();
 
     const userDropdownRef = useRef(null);
@@ -23,24 +25,27 @@ const Navbar = () => {
     const isAdmin = showAuthenticatedUserInfo && userRole === 'admin';
     const isVip = showAuthenticatedUserInfo && userRole === 'vip';
 
-    // ✅ CHANGED: Navigation links are now built dynamically.
-    // The "Family" link will only be added if a user is signed in.
     const baseNavigation = [
-        { name: 'Home', href: '/', current: location.pathname === '/' },
-        { name: 'Map', href: '/map', current: location.pathname === '/map' },
-        { name: 'Alerts', href: '/alerts', current: location.pathname === '/alerts' },
-        { name: 'About', href: '/about', current: location.pathname === '/about' },
+        { name: t('home'), href: '/', current: location.pathname === '/' },
+        { name: t('map'), href: '/map', current: location.pathname === '/map' },
+        { name: t('alerts'), href: '/alerts', current: location.pathname === '/alerts' },
+        { name: t('about'), href: '/about', current: location.pathname === '/about' },
     ];
 
     const navigation = showAuthenticatedUserInfo 
         ? [
-            ...baseNavigation.slice(0, 3),
-            { name: 'Family', href: '/family', current: location.pathname === '/family' },
-            ...baseNavigation.slice(3)
+              ...baseNavigation.slice(0, 3), 
+              { name: t('family'), href: '/family', current: location.pathname === '/family' },
+              { name: t('familyTracker'), href: '/family-tracker', current: location.pathname === '/family-tracker' },
+              ...baseNavigation.slice(3)
           ]
         : baseNavigation;
-
-    const handleLanguageToggle = () => setLanguage(language === 'EN' ? 'हिं' : 'EN');
+    
+    // 4. New handler to change language
+    const handleLanguageToggle = () => {
+        const newLang = i18n.language === 'en' ? 'hi' : 'en';
+        i18n.changeLanguage(newLang);
+    };
 
     const getDisplayName = () => {
         if (!currentUser) return '';
@@ -80,8 +85,9 @@ const Navbar = () => {
                                     <MapPin className="h-8 w-8 text-white" />
                                 </div>
                                 <div>
-                                    <h1 className="text-xl font-bold text-gray-900"> Kumbh-Shilp </h1>
-                                    <p className="text-sm text-gray-600">Navigation Portal</p>
+                                    {/* USE t() function for translation */}
+                                    <h1 className="text-xl font-bold text-gray-900">{t('kumbhShilp')}</h1>
+                                    <p className="text-sm text-gray-600">{t('navigationPortal')}</p>
                                 </div>
                             </Link>
                         </div>
@@ -93,8 +99,8 @@ const Navbar = () => {
 
                         {/* Desktop Auth & Controls */}
                         <div className="hidden md:flex items-center space-x-4">
-                            <button onClick={handleLanguageToggle} className="px-3 py-1 rounded-md bg-orange-100 text-orange-700 text-sm font-medium hover:bg-orange-200">
-                                {language}
+                            <button onClick={handleLanguageToggle} className="px-3 py-1 w-12 rounded-md bg-orange-100 text-orange-700 text-sm font-medium hover:bg-orange-200">
+                                {i18n.language === 'en' ? 'हिं' : 'EN'}
                             </button>
 
                             {showAuthenticatedUserInfo ? (
@@ -113,17 +119,14 @@ const Navbar = () => {
                                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 border">
                                             {isAdmin && (
                                                 <Link to="/verify-alerts" onClick={() => setIsUserDropdownOpen(false)} className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-violet-600 hover:bg-gray-100">
-                                                    <ShieldAlert className="h-4 w-4" />
-                                                    <span>Verify Alerts</span>
+                                                    <ShieldAlert className="h-4 w-4" /><span>{t('verifyAlerts')}</span>
                                                 </Link>
                                             )}
                                             <Link to="/profile" onClick={() => setIsUserDropdownOpen(false)} className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                <Settings className="h-4 w-4" />
-                                                <span>Profile</span>
+                                                <Settings className="h-4 w-4" /><span>{t('profile')}</span>
                                             </Link>
                                             <button onClick={handleLogout} className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                <LogOut className="h-4 w-4" />
-                                                <span>Logout</span>
+                                                <LogOut className="h-4 w-4" /><span>{t('logout')}</span>
                                             </button>
                                         </div>
                                     )}
@@ -132,23 +135,22 @@ const Navbar = () => {
                                 // Auth Dropdown for non-logged-in users
                                 <div className="relative" ref={authDropdownRef}>
                                     <button onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)} className="flex items-center space-x-2 px-4 py-2 rounded-md bg-violet-600 text-white hover:bg-violet-700">
-                                        <User className="h-4 w-4" /><span>Login</span><ChevronDown className="h-4 w-4" />
+                                        <User className="h-4 w-4" /><span>{t('login')}</span><ChevronDown className="h-4 w-4" />
                                     </button>
                                     {isAuthDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 border">
                                             <button onClick={() => { setIsAuthModalOpen(true); setIsAuthDropdownOpen(false); }} className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                <User className="h-4 w-4" /><span>Sign In</span>
+                                                <User className="h-4 w-4" /><span>{t('signIn')}</span>
                                             </button>
                                             <button onClick={() => { setIsVipAuthModalOpen(true); setIsAuthDropdownOpen(false); }} className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                                <Crown className="h-4 w-4 text-amber-500" /><span>VIP Sign In</span>
+                                                <Crown className="h-4 w-4 text-amber-500" /><span>{t('vipSignIn')}</span>
                                             </button>
                                         </div>
                                     )}
                                 </div>
                             )}
                         </div>
-
-                        {/* Mobile menu button */}
+                         {/* Mobile menu button */}
                         <div className="md:hidden flex items-center">
                             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-gray-700 hover:text-violet-600">
                                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -191,7 +193,6 @@ const Navbar = () => {
                     </div>
                 )}
             </nav>
-
             <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
             <VipAuthModal isOpen={isVipAuthModalOpen} onClose={() => setIsVipAuthModalOpen(false)} />
         </>

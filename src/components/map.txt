@@ -1,22 +1,31 @@
+/// Last commited MapView.jsx for further issues 
+
+
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useAuth } from '../context/AuthContext';
-import { useMap } from '../context/MapContext';
 import { db } from '../firebase/config';
 import { collection, onSnapshot, doc, setDoc, query } from 'firebase/firestore';
 import {
   Navigation, MapPin, Car, Users, AlertTriangle, LocateFixed, Route, List,
   ArrowUp, ArrowUpRight, ArrowRight, ArrowDownRight, ArrowDown, ArrowDownLeft,
   ArrowLeft, ArrowUpLeft, CornerDownLeft, CornerDownRight, RefreshCw, ChevronRight,
-  RotateCcw, RotateCw, Crown, Shield, Clock, ChevronDown, ChevronUp, Settings
+  RotateCcw, RotateCw
 } from 'lucide-react';
-import staticImportantLocationsData from '../data/importantLocations.json';
-import RamGhatImage from '../assets/Ram_Ghat.jpg';
+import staticImportantLocationsData from '../data/importantLocations.json'; // Renamed to avoid conflict with state variable
 
-const localImagesMap = {
+import RamGhatImage from '../assets/Ram_Ghat.jpg';
+// You'd import other local images similarly:
+// import AnotherImage from '../assets/another_image.jpg';
+
+
+const localImagesMap = { // Renamed to avoid conflict with function scope
   RamGhat: RamGhatImage,
+  // Add other local images here if you have them, e.g.:
+  // AnotherLocation: AnotherImage,
 };
 
 // Define potential crowd hotspot zones with a threshold for congestion
@@ -64,15 +73,15 @@ L.Icon.Default.mergeOptions({
 // Custom icon for user's current location
 const userLocationIcon = L.divIcon({
   html: `<div style="background-color: #3B82F6; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-locate-fixed">
-             <line x1="2" x2="5" y1="12" y2="12"></line>
-             <line x1="19" x2="22" y1="12" y2="12"></line>
-             <line x1="12" x2="12" y1="2" y2="5"></line>
-             <line x1="12" x2="12" y1="19" y2="22"></line>
-             <circle cx="12" cy="12" r="7"></circle>
-             <circle cx="12" cy="12" r="3"></circle>
-           </svg>
-         </div>`,
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-locate-fixed">
+            <line x1="2" x2="5" y1="12" y2="12"></line>
+            <line x1="19" x2="22" y1="12" y2="12"></line>
+            <line x1="12" x2="12" y1="2" y2="5"></line>
+            <line x1="12" x2="12" y1="19" y2="22"></line>
+            <circle cx="12" cy="12" r="7"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>`,
   className: 'user-location-marker',
   iconSize: [30, 30],
   iconAnchor: [15, 15]
@@ -82,28 +91,20 @@ const MapView = () => {
   // Access authentication context
   const { userId, userRole, isAuthReady } = useAuth();
 
-  // Access map context for VIP routes
-  const { 
-    vipRouteDefinitions,
-    vipRouteControls, 
-    vipRoutes, 
-    activeVipRoutesCount, 
-    handleVipRouteToggle, 
-    handleWaitingTimeChange,
-    loadingVipRoutes
-  } = useMap();
-
   // State for map data
+  // Correctly process staticImportantLocationsData to include local image URLs
   const [importantLocations] = useState(
     staticImportantLocationsData.map((loc, index) => {
+      // Check if the location has an imageKey and if it exists in localImagesMap
       if (loc.imageKey && localImagesMap[loc.imageKey]) {
         return { ...loc, id: loc.id || index, imageUrl: localImagesMap[loc.imageKey] };
       }
       return { ...loc, id: loc.id || index };
     })
   );
+
   const [livePilgrimLocations, setLivePilgrimLocations] = useState([]);
-  const [userLocation, setUserLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null); // Current user's GPS location
 
   // UI state
   const [dynamicRoute, setDynamicRoute] = useState(null);
@@ -112,9 +113,11 @@ const MapView = () => {
   const [showInstructionsPanel, setShowInstructionsPanel] = useState(false);
   const [totalRouteDistance, setTotalRouteDistance] = useState(0);
   const [totalRouteDuration, setTotalRouteDuration] = useState(0);
+
   const [routingError, setRoutingError] = useState(null);
   const [isRouting, setIsRouting] = useState(false);
   const [routeRequested, setRouteRequested] = useState(false);
+
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [loadingLiveLocations, setLoadingLiveLocations] = useState(true);
   const [geolocationError, setGeolocationError] = useState(null);
@@ -127,9 +130,6 @@ const MapView = () => {
   // State to hold active crowd alerts (dynamic heatmap areas)
   const [dynamicCrowdAlerts, setDynamicCrowdAlerts] = useState([]);
 
-  // UI State for VIP controls
-  const [showVipControls, setShowVipControls] = useState(false);
-
   const mapRef = useRef();
 
   // Ujjain coordinates (center of Simhastha)
@@ -138,15 +138,15 @@ const MapView = () => {
   // Access global __app_id
   const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-  // Helper function to validate coordinates
+  // --- Helper function to validate coordinates ---
   const isValidLatLng = (lat, lng) => {
     return typeof lat === 'number' && typeof lng === 'number' &&
-      !isNaN(lat) && !isNaN(lng) &&
-      lat >= -90 && lat <= 90 &&
-      lng >= -180 && lng <= 180;
+            !isNaN(lat) && !isNaN(lng) &&
+            lat >= -90 && lat <= 90 &&
+            lng >= -180 && lng <= 180;
   };
 
-  // Fetch Live Pilgrim Locations from Firestore
+  // --- Fetch Live Pilgrim Locations from Firestore ---
   useEffect(() => {
     setLoadingLiveLocations(true);
     const liveLocationsCollectionRef = collection(db, `artifacts/${appId}/public/data/live_pilgrim_locations`);
@@ -181,7 +181,7 @@ const MapView = () => {
     return () => unsubscribe();
   }, [appId]);
 
-  // Get and Update User's Live Geolocation
+  // --- Get and Update User's Live Geolocation ---
   useEffect(() => {
     if (!isAuthReady || !userId) {
       console.log("Auth not ready or userId not available for geolocation tracking.");
@@ -192,14 +192,12 @@ const MapView = () => {
 
     const updateUserLocationInFirestore = async (position) => {
       const { latitude, longitude } = position.coords;
-
       if (!isValidLatLng(latitude, longitude)) {
         console.error("Attempted to update Firestore with invalid coordinates:", latitude, longitude);
         return;
       }
 
       const userLocationDocRef = doc(db, `artifacts/${appId}/public/data/live_pilgrim_locations`, userId);
-
       try {
         await setDoc(userLocationDocRef, {
           latitude,
@@ -214,7 +212,6 @@ const MapView = () => {
 
     const successHandler = (position) => {
       const { latitude, longitude } = position.coords;
-
       if (isValidLatLng(latitude, longitude)) {
         setUserLocation([latitude, longitude]);
         setGeolocationError(null);
@@ -228,7 +225,6 @@ const MapView = () => {
 
     const errorHandler = (error) => {
       let errorMessage = "An unknown geolocation error occurred.";
-
       switch (error.code) {
         case error.PERMISSION_DENIED:
           errorMessage = "Geolocation permission denied. Please enable location services for this site.";
@@ -245,7 +241,6 @@ const MapView = () => {
         default:
           errorMessage = `Geolocation error: ${error.message || error.code}. Attempting to re-acquire...`;
       }
-
       setGeolocationError(errorMessage);
       console.error("Geolocation error:", errorMessage, error);
 
@@ -267,13 +262,11 @@ const MapView = () => {
         console.error("Geolocation is not supported by your browser.");
         return;
       }
-
       watchId = navigator.geolocation.watchPosition(successHandler, errorHandler, {
         enableHighAccuracy: true,
         timeout: 10000,
         maximumAge: 0
       });
-
       console.log("Geolocation watch started.");
     };
 
@@ -287,41 +280,38 @@ const MapView = () => {
     };
   }, [isAuthReady, userId, appId, geolocationRetryCount]);
 
-  // Dynamic Crowd Heatmap Calculation based on Live Pilgrim Locations
+  // --- Dynamic Crowd Heatmap Calculation based on Live Pilgrim Locations ---
   useEffect(() => {
     if (!showHeatmap) {
-      setDynamicCrowdAlerts([]);
+      setDynamicCrowdAlerts([]); // Clear alerts if heatmap is toggled off
       return;
     }
 
     const newDynamicCrowdAlerts = [];
-
     dynamicCrowdHotspotsDefinitions.forEach(hotspot => {
       let pilgrimsInArea = 0;
-
       livePilgrimLocations.forEach(pilgrim => {
+        // Ensure pilgrim coordinates are valid before calculating distance
         if (isValidLatLng(pilgrim.latitude, pilgrim.longitude)) {
           const distance = L.latLng(hotspot.coords[0], hotspot.coords[1])
-            .distanceTo(L.latLng(pilgrim.latitude, pilgrim.longitude));
-
+                            .distanceTo(L.latLng(pilgrim.latitude, pilgrim.longitude));
           if (distance <= hotspot.radius) {
             pilgrimsInArea++;
           }
         }
       });
 
+      // If the number of pilgrims exceeds the threshold for this hotspot, add it to alerts
       if (pilgrimsInArea >= hotspot.minPilgrims) {
         newDynamicCrowdAlerts.push({ ...hotspot, currentPilgrims: pilgrimsInArea });
       }
     });
-
     setDynamicCrowdAlerts(newDynamicCrowdAlerts);
   }, [livePilgrimLocations, showHeatmap]);
 
-  // Helper to get Lucide icon based on OSRM maneuver
+  // --- Helper to get Lucide icon based on OSRM maneuver ---
   const getManeuverIcon = useCallback((type, modifier) => {
     const iconProps = { className: "h-5 w-5 flex-shrink-0 text-gray-700" };
-
     switch (type) {
       case 'turn':
       case 'new name':
@@ -346,14 +336,13 @@ const MapView = () => {
     }
   }, []);
 
-  // Routing Engine Integration (OSRM)
+  // --- Routing Engine Integration (OSRM) ---
   const fetchRoute = useCallback(async (startCoords, endCoords) => {
     setIsRouting(true);
     setRoutingError(null);
     setRouteInstructions([]);
     setTotalRouteDistance(0);
     setTotalRouteDuration(0);
-
     try {
       const url = `https://router.project-osrm.org/route/v1/driving/${startCoords[1]},${startCoords[0]};${endCoords[1]},${endCoords[0]}?overview=full&geometries=geojson&steps=true`;
       const response = await fetch(url);
@@ -362,7 +351,6 @@ const MapView = () => {
       if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
         const route = data.routes[0];
         const routeCoordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
-
         setDynamicRoute(routeCoordinates);
         console.log("Route fetched successfully:", routeCoordinates);
 
@@ -401,9 +389,9 @@ const MapView = () => {
             modifier: step.maneuver.modifier
           };
         });
-
         setRouteInstructions(instructions);
         setShowInstructionsPanel(true);
+
         setTotalRouteDistance(route.distance / 1000);
         setTotalRouteDuration(route.duration / 60);
 
@@ -417,7 +405,6 @@ const MapView = () => {
         setTotalRouteDuration(0);
         console.error("Routing API error:", errorMsg, data);
       }
-
     } catch (error) {
       setRoutingError("Failed to fetch route. Please check your network connection.");
       setDynamicRoute(null);
@@ -431,21 +418,21 @@ const MapView = () => {
     }
   }, []);
 
-  // Effect to trigger route calculation when userLocation or selectedDestination changes
+  // --- Effect to trigger route calculation when userLocation or selectedDestination changes ---
   useEffect(() => {
     if (routeRequested && userLocation && selectedDestination && !isRouting) {
-      fetchRoute(userLocation, selectedDestination.coords);
+        fetchRoute(userLocation, selectedDestination.coords);
     } else if (!routeRequested) {
-      setDynamicRoute(null);
-      setRoutingError(null);
-      setRouteInstructions([]);
-      setShowInstructionsPanel(false);
-      setTotalRouteDistance(0);
-      setTotalRouteDuration(0);
+        setDynamicRoute(null);
+        setRoutingError(null);
+        setRouteInstructions([]);
+        setShowInstructionsPanel(false);
+        setTotalRouteDistance(0);
+        setTotalRouteDuration(0);
     }
   }, [routeRequested, userLocation, selectedDestination, fetchRoute]);
 
-  // Marker Icon Logic
+  // --- Marker Icon Logic ---
   const getMarkerIcon = useCallback((type, vipAccess) => {
     const colors = {
       ghat: '#8B5CF6',
@@ -463,7 +450,7 @@ const MapView = () => {
        </div>`,
       className: 'custom-marker',
       iconSize: [size, size],
-      iconAnchor: [size / 2, size / 2]
+      iconAnchor: [size/2, size/2]
     });
   }, [userRole]);
 
@@ -472,8 +459,8 @@ const MapView = () => {
     ? importantLocations.filter(loc => isValidLatLng(loc.coords[0], loc.coords[1]))
     : importantLocations.filter(loc => !loc.vipAccess && isValidLatLng(loc.coords[0], loc.coords[1]));
 
-  // Loading State and Error Display
-  if (!isAuthReady || loadingLiveLocations || loadingVipRoutes) {
+  // --- Loading State and Error Display ---
+  if (!isAuthReady || loadingLiveLocations) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-600">
         Loading map data...
@@ -485,7 +472,7 @@ const MapView = () => {
     <div className="h-screen relative">
       {/* Geolocation Error Message */}
       {geolocationError && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-red-500 text-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
           <AlertTriangle className="h-5 w-5" />
           <span>{geolocationError}</span>
         </div>
@@ -493,71 +480,48 @@ const MapView = () => {
 
       {/* Routing Error Message */}
       {routingError && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 bg-red-500 text-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 bg-red-500 text-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
           <AlertTriangle className="h-5 w-5" />
           <span>{routingError}</span>
         </div>
       )}
 
-      {/* VIP Routes Active Notification */}
-      {activeVipRoutesCount > 0 && (
-        <div className="absolute top-28 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white p-3 rounded-lg shadow-lg flex items-center space-x-2">
-          <Crown className="h-5 w-5" />
-          <span>{activeVipRoutesCount} VIP Route{activeVipRoutesCount > 1 ? 's' : ''} Active - Corridors Restricted</span>
-        </div>
-      )}
-
       {/* Map Controls */}
-      <div className="absolute top-4 right-4 z-40 space-y-2">
+      <div className="absolute top-4 right-4 z-10 space-y-2">
         <div className="bg-white rounded-lg shadow-lg p-4 max-w-xs">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-900">Map Controls</h3>
-            <div className={`px-2 py-1 rounded-full text-xs font-medium ${userRole === 'VIP'
+            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+              userRole === 'VIP'
                 ? 'bg-orange-100 text-orange-700'
-                : userRole === 'admin'
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-violet-100 text-violet-700'
-              }`}>
+                : 'bg-violet-100 text-violet-700'
+            }`}>
               {userRole}
             </div>
           </div>
+
           <div className="space-y-2">
             <button
               onClick={() => setShowHeatmap(!showHeatmap)}
-              className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${showHeatmap
+              className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                showHeatmap
                   ? 'bg-orange-100 text-orange-700'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+              }`}
             >
               <Users className="h-4 w-4" />
               <span>{showHeatmap ? 'Hide Crowd' : 'Show Crowd'}</span>
             </button>
 
-            {/* VIP Routes Control - Show only to admin users */}
-            {userRole === 'admin' && (
-              <button
-                onClick={() => setShowVipControls(!showVipControls)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${showVipControls
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-              >
-                <div className="flex items-center space-x-2">
-                  <Settings className="h-4 w-4" />
-                  <span>VIP Route Controls</span>
-                </div>
-                {showVipControls ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </button>
-            )}
-
             {/* Toggle Instructions Panel Button */}
             {routeInstructions.length > 0 && (
               <button
                 onClick={() => setShowInstructionsPanel(!showInstructionsPanel)}
-                className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${showInstructionsPanel
+                className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  showInstructionsPanel
                     ? 'bg-blue-100 text-blue-700'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                }`}
               >
                 <List className="h-4 w-4" />
                 <span>{showInstructionsPanel ? 'Hide Directions' : 'Show Directions'}</span>
@@ -565,78 +529,18 @@ const MapView = () => {
             )}
           </div>
         </div>
-
-        {/* Individual VIP Route Controls Panel */}
-        {userRole === 'admin' && showVipControls && (
-          <div className="bg-white rounded-lg shadow-lg p-4 max-w-sm max-h-96 overflow-y-auto">
-            <h4 className="font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-              <Crown className="h-5 w-5 text-red-600" />
-              <span>VIP Route Management</span>
-            </h4>
-            <div className="space-y-4">
-              {vipRouteDefinitions.map((routeDef) => {
-                const control = vipRouteControls[routeDef.id];
-                return (
-                  <div key={routeDef.id} className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-3 h-3 rounded-full ${control.active ? 'bg-red-500' : 'bg-gray-300'}`}></div>
-                        <span className="font-medium text-sm text-gray-900">{routeDef.shortName}</span>
-                      </div>
-                      <button
-                        onClick={() => handleVipRouteToggle(routeDef.id)}
-                        disabled={control.loading}
-                        className={`px-2 py-1 rounded text-xs font-medium transition-colors ${control.active
-                            ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          } ${control.loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {control.loading ? (
-                          <RefreshCw className="h-3 w-3 animate-spin" />
-                        ) : (
-                          control.active ? 'Deactivate' : 'Activate'
-                        )}
-                      </button>
-                    </div>
-                    <p className="text-xs text-gray-600 mb-2">{routeDef.description}</p>
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <label className="text-xs text-gray-700">Wait Time:</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="120"
-                        value={control.waitingTime}
-                        onChange={(e) => handleWaitingTimeChange(routeDef.id, e.target.value)}
-                        className="w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:border-red-500"
-                      />
-                      <span className="text-xs text-gray-500">min</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {activeVipRoutesCount > 0 && (
-              <div className="mt-4 p-2 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-xs text-red-700 font-medium">
-                  {activeVipRoutesCount} route{activeVipRoutesCount > 1 ? 's' : ''} currently blocking traffic
-                </p>
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
-      {/* Turn-by-Turn Instructions Panel */}
+      {/* Turn-by-Turn Instructions Panel (Custom Panel) */}
       {showInstructionsPanel && routeInstructions.length > 0 && (
-        <div className="absolute top-4 left-4 z-30 bg-white rounded-lg shadow-lg p-4 max-w-sm max-h-[calc(100vh-150px)] overflow-y-auto">
+        <div className="absolute top-4 left-4 z-10 bg-white rounded-lg shadow-lg p-4 max-w-sm max-h-[calc(100vh-150px)] overflow-y-auto">
           <h4 className="font-semibold text-gray-900 mb-2 flex items-center space-x-2">
             <Route className="h-5 w-5 text-blue-600" />
             <span>Directions to {selectedDestination?.name}</span>
           </h4>
           {totalRouteDistance > 0 && (
             <p className="text-sm text-gray-600 mb-3">
-              Total Distance: {totalRouteDistance.toFixed(2)} km <br />
+              Total Distance: {totalRouteDistance.toFixed(2)} km <br/>
               Estimated Time: {totalRouteDuration.toFixed(0)} min
             </p>
           )}
@@ -658,7 +562,7 @@ const MapView = () => {
       )}
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 z-30">
+      <div className="absolute bottom-4 left-4 z-10">
         <div className="bg-white rounded-lg shadow-lg p-4">
           <h4 className="font-semibold text-gray-900 mb-2">Legend</h4>
           <div className="space-y-1 text-xs">
@@ -678,16 +582,11 @@ const MapView = () => {
               <div className="w-3 h-3 rounded-full bg-red-600"></div>
               <span>Medical</span>
             </div>
+            {/* Show Crowd Hotspots legend entry if heatmap is active */}
             {showHeatmap && (
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full bg-red-500 opacity-60"></div>
                 <span>Crowd Hotspots</span>
-              </div>
-            )}
-            {activeVipRoutesCount > 0 && (
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-1 bg-red-600"></div>
-                <span>VIP Routes (Restricted)</span>
               </div>
             )}
           </div>
@@ -706,7 +605,7 @@ const MapView = () => {
           attribution='© OpenStreetMap contributors'
         />
 
-        {/* Important Location Markers */}
+        {/* Important Location Markers (from static JSON) */}
         {filteredImportantLocations.map((location) => (
           location.coords && (
             <Marker
@@ -714,58 +613,60 @@ const MapView = () => {
               position={location.coords}
               icon={getMarkerIcon(location.type, location.vipAccess)}
             >
+              {/* No custom className on Popup itself, rely on inner div for inline style */}
               <Popup>
                 <div style={{
-                  padding: '0',
-                  margin: '0',
-                  backgroundColor: '#ffffff',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  width: '240px',
+                  padding: '0', // Remove internal padding for visual flushness
+                  margin: '0', // Remove internal margin
+                  backgroundColor: '#ffffff', // White background for the popup content
+                  borderRadius: '8px', // Rounded corners
+                  overflow: 'hidden', // Hide overflow for rounded corners on image
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)', // Subtle shadow
+                  width: '240px', // Fixed width for consistent popup size, adjust as needed
                   display: 'flex',
                   flexDirection: 'column'
                 }}>
-                  {location.imageUrl && (
+                  {location.imageUrl && ( // Conditionally render image
                     <img
                       src={location.imageUrl}
                       alt={location.name}
+                      // Apply inline styles for image within the popup
                       style={{
-                        width: '100%',
-                        height: '120px',
-                        objectFit: 'cover',
-                        borderTopLeftRadius: '8px',
-                        borderTopRightRadius: '8px',
+                        width: '100%', // Make image fill the width of the popup
+                        height: '120px', // Fixed height for consistency
+                        objectFit: 'cover', // Cover the area, cropping if necessary
+                        borderTopLeftRadius: '8px', // Match popup border radius
+                        borderTopRightRadius: '8px', // Match popup border radius
                       }}
-                      className="popup-image"
+                      className="popup-image" // Keeping this for targetability if needed, though inline styles are primary here
                     />
                   )}
-                  <div style={{ padding: '16px', textAlign: 'center' }}>
+                  <div style={{ padding: '16px', textAlign: 'center' }}> {/* Padding for text content */}
                     <h3 style={{
-                      fontWeight: '600',
-                      color: '#1a202c',
-                      marginBottom: '8px',
-                      fontSize: '1.125rem'
+                      fontWeight: '600', // semibold
+                      color: '#1a202c', // gray-900
+                      marginBottom: '8px', // space-y-2 equivalent for h3
+                      fontSize: '1.125rem' // text-lg, slightly larger for prominence
                     }}>{location.name}</h3>
                     <p style={{
-                      fontSize: '0.875rem',
-                      color: '#4a5568',
-                      marginTop: '4px'
+                      fontSize: '0.875rem', // text-sm
+                      color: '#4a5568', // gray-600
+                      marginTop: '4px' // mt-1
                     }}>{location.description}</p>
                     {location.vipAccess && (
                       <div style={{
-                        marginTop: '12px',
-                        padding: '4px 8px',
-                        backgroundColor: '#fffbeb',
-                        color: '#c2410c',
-                        fontSize: '0.75rem',
-                        borderRadius: '9999px',
-                        display: 'inline-block'
+                        marginTop: '12px', // mt-2
+                        padding: '4px 8px', // px-2 py-1
+                        backgroundColor: '#fffbeb', // orange-100
+                        color: '#c2410c', // orange-700
+                        fontSize: '0.75rem', // text-xs
+                        borderRadius: '9999px', // rounded-full
+                        display: 'inline-block' // inline-block
                       }}>
                         VIP Access
                       </div>
                     )}
-                    <div style={{ marginTop: '16px' }}>
+                    <div style={{ marginTop: '16px' }}> {/* mt-3 */}
                       {userLocation ? (
                         <button
                           onClick={() => {
@@ -782,55 +683,55 @@ const MapView = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '8px',
-                            padding: '8px 12px',
-                            borderRadius: '8px',
-                            fontSize: '0.875rem',
-                            fontWeight: '500',
-                            transition: 'background-color 0.15s ease-in-out, color 0.15s ease-in-out',
+                            gap: '8px', // space-x-2
+                            padding: '8px 12px', // px-3 py-2
+                            borderRadius: '8px', // rounded-lg
+                            fontSize: '0.875rem', // text-sm
+                            fontWeight: '500', // font-medium
+                            transition: 'background-color 0.15s ease-in-out, color 0.15s ease-in-out', // transition-colors
                             border: 'none',
                             cursor: isRouting ? 'not-allowed' : 'pointer',
                             opacity: isRouting ? 0.7 : 1,
                             backgroundColor: selectedDestination && selectedDestination.id === location.id
-                              ? '#ede9fe'
-                              : '#f3f4f6',
+                              ? '#ede9fe' // violet-100
+                              : '#f3f4f6', // gray-100
                             color: selectedDestination && selectedDestination.id === location.id
-                              ? '#7c3aed'
-                              : '#374151',
+                              ? '#7c3aed' // violet-700
+                              : '#374151', // gray-700
                           }}
                           onMouseEnter={(e) => {
                             if (!(selectedDestination && selectedDestination.id === location.id)) {
-                              e.currentTarget.style.backgroundColor = '#e5e7eb';
+                              e.currentTarget.style.backgroundColor = '#e5e7eb'; // hover:bg-gray-200
                             }
                           }}
                           onMouseLeave={(e) => {
                             if (!(selectedDestination && selectedDestination.id === location.id)) {
-                              e.currentTarget.style.backgroundColor = '#f3f4f6';
+                              e.currentTarget.style.backgroundColor = '#f3f4f6'; // gray-100
                             }
                           }}
                           disabled={isRouting}
                         >
                           {isRouting && selectedDestination?.id === location.id ? (
                             <>
-                              <Route style={{ height: '1rem', width: '1rem' }} className="animate-spin" />
+                              <Route style={{ height: '1rem', width: '1rem' }} className="animate-spin" /> {/* h-4 w-4 */}
                               <span>Routing...</span>
                             </>
                           ) : (
                             <>
-                              <Route style={{ height: '1rem', width: '1rem' }} />
+                              <Route style={{ height: '1rem', width: '1rem' }} /> {/* h-4 w-4 */}
                               <span>{selectedDestination && selectedDestination.id === location.id ? 'Hide Route' : 'Show Route'}</span>
                             </>
                           )}
                         </button>
                       ) : (
                         <p style={{
-                          fontSize: '0.75rem',
-                          color: '#6b7280',
+                          fontSize: '0.75rem', // text-xs
+                          color: '#6b7280', // gray-500
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center'
+                          justifyContent: 'center' // Center this text too
                         }}>
-                          <LocateFixed style={{ height: '0.75rem', width: '0.75rem', marginRight: '4px' }} />
+                          <LocateFixed style={{ height: '0.75rem', width: '0.75rem', marginRight: '4px' }} /> {/* h-3 w-3 mr-1 */}
                           Get your location to show route
                         </p>
                       )}
@@ -849,73 +750,34 @@ const MapView = () => {
           </Marker>
         )}
 
-        {/* Dynamic Crowd Hotspot Circles */}
+        {/* Dynamic Crowd Hotspot Circles (rendered if showHeatmap is true and alerts exist) */}
         {showHeatmap && dynamicCrowdAlerts.map(hotspot => (
-          <Circle
-            key={hotspot.id}
-            center={hotspot.coords}
-            radius={hotspot.radius}
-            pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.3, weight: 2 }}
-          >
-            <Popup>
-              <h4 className="font-semibold">{hotspot.name}</h4>
-              <p className="text-sm text-gray-600">Live Crowd: {hotspot.currentPilgrims} pilgrims</p>
-            </Popup>
-          </Circle>
+            <Circle
+                key={hotspot.id}
+                center={hotspot.coords}
+                radius={hotspot.radius}
+                pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.3, weight: 2 }}
+            >
+                <Popup>
+                    <h4 className="font-semibold">{hotspot.name}</h4>
+                    <p className="text-sm text-gray-600">Live Crowd: {hotspot.currentPilgrims} pilgrims</p>
+                </Popup>
+            </Circle>
         ))}
 
-        {/* Fixed Demo Crowd Hotspot Circles */}
+        {/* Fixed Demo Crowd Hotspot Circles (always rendered if showHeatmap is true) */}
         {showHeatmap && fixedDemoCrowdHotspots.map(hotspot => (
-          <Circle
-            key={hotspot.id}
-            center={hotspot.coords}
-            radius={hotspot.radius}
-            pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.3, weight: 2 }}
-          >
-            <Popup>
-              <h4 className="font-semibold">{hotspot.name}</h4>
-              <p className="text-sm text-gray-600">Demonstration Hotspot</p>
-            </Popup>
-          </Circle>
-        ))}
-
-        {/* Individual VIP Routes Polylines */}
-        {vipRoutes.map(route => (
-          <Polyline
-            key={route.id}
-            positions={route.coordinates}
-            pathOptions={{
-              color: route.color,
-              weight: 6,
-              opacity: 0.8,
-              dashArray: '10, 5',
-            }}
-          >
-            <Popup>
-              <div className="text-center">
-                <div className="flex items-center justify-center space-x-2 mb-2">
-                  <Crown className="h-5 w-5 text-red-600" />
-                  <h4 className="font-semibold text-red-600">{route.name}</h4>
-                </div>
-                <p className="text-sm text-gray-600 mb-2">{route.description}</p>
-                <div className="text-xs text-gray-500 mb-2">
-                  <p>From: {route.startPoint.name}</p>
-                  <p>To: {route.endPoint.name}</p>
-                  {route.distance && <p>Distance: {route.distance.toFixed(2)} km</p>}
-                  {route.duration && <p>Duration: {route.duration.toFixed(0)} min</p>}
-                </div>
-                {route.waitingTime && (
-                  <div className="mb-2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs flex items-center justify-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span>Expected Wait: {route.waitingTime} min</span>
-                  </div>
-                )}
-                <div className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">
-                  🚫 RESTRICTED - VIP Only
-                </div>
-              </div>
-            </Popup>
-          </Polyline>
+            <Circle
+                key={hotspot.id}
+                center={hotspot.coords}
+                radius={hotspot.radius}
+                pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 0.3, weight: 2 }}
+            >
+                <Popup>
+                    <h4 className="font-semibold">{hotspot.name}</h4>
+                    <p className="text-sm text-gray-600">Demonstration Hotspot</p>
+                </Popup>
+            </Circle>
         ))}
 
         {/* Dynamic Route Polyline */}

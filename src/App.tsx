@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { MapProvider } from './context/MapContext'; // 1. Import the MapProvider
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -11,7 +12,8 @@ import ProfilePage from './pages/ProfilePage';
 import VipSignup from './pages/VipSignup';
 import VerifyAlertsPage from './pages/VerifyAlertsPage';
 import AdminRoute from './components/AdminRoute';
-import FamilyPage from './pages/FamilyPage'; // ✅ ADDED: Import the new FamilyPage
+import FamilyPage from './pages/FamilyPage';
+import FamilyTracker from './components/FamilyTracker';
 
 const AppContent = () => {
     const { isAuthReady } = useAuth();
@@ -29,7 +31,8 @@ const AppContent = () => {
                     <Route path="/about" element={<About />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/vip-signup" element={<VipSignup />} />
-                    <Route path="/family" element={<FamilyPage />} /> {/* ✅ ADDED: The new route for the Family Page */}
+                    <Route path="/family" element={<FamilyPage />} />
+                    <Route path="/family-tracker" element={<FamilyTracker />} /> 
                     <Route 
                         path="/verify-alerts" 
                         element={
@@ -49,7 +52,10 @@ function App() {
     return (
         <Router>
             <AuthProvider>
-                <AppContent />
+                {/* 2. Wrap the AppContent with MapProvider */}
+                <MapProvider>
+                    <AppContent />
+                </MapProvider>
             </AuthProvider>
         </Router>
     );

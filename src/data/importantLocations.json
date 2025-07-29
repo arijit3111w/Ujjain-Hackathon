@@ -62,5 +62,45 @@
     "description": "A satellite medical help point located strategically to offer quick medical assistance within walking distance of key areas.",
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Medical_Camp_%284%29.jpg/1280px-Medical_Camp_%284%29.jpg",
     "vipAccess": false
+  },
+  {
+    "name": "Gyan Ganga Ghat",
+    "type": "ghat",
+    "coords": [23.1902, 75.7653],
+    "description": "This ghat is another important site for pilgrims to take ritualistic dips and perform religious ceremonies during the Kumbh Mela.",
+    "imageKey": "GyanGangaGhat",
+    "vipAccess": false
+  },
+  {
+    "name": "Mangalnath Mandir",
+    "type": "temple",
+    "coords": [23.2005, 75.7853],
+    "description": "Dedicated to Lord Shiva, this temple is renowned for its celestial connection and is considered the birthplace of Mars (Mangal).",
+    "imageKey": "MangalnathMandir",
+    "vipAccess": false
+  },
+  {
+    "name": "Bhartrihari Caves",
+    "type": "spiritual",
+    "coords": [23.1898, 75.7657],
+    "description": "Ancient caves linked to the sage Bhartrihari, where he is believed to have meditated. They hold deep spiritual and historical value.",
+    "imageKey": "BhartrihariCaves",
+    "vipAccess": false
+  },
+  {
+    "name": "Indore Airport",
+    "type": "transport",
+    "coords": [22.72886556278097, 75.80378815227787],
+    "description": "The nearest major airport serving Ujjain pilgrims and visitors, offering domestic connectivity to major cities.",
+    "imageKey": "IndoreAirport",
+    "vipAccess": false
+  },
+  {
+    "name": "Ujjain Railway Station",
+    "type": "transport",
+    "coords": [23.178748186934527, 75.78077726776382],
+    "description": "A major railway junction connecting Ujjain to various cities across India, handling high footfall during the Simhastha Kumbh Mela.",
+    "imageKey": "UjjainRailwayStation",
+    "vipAccess": false
   }
 ]
