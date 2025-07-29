@@ -5,7 +5,7 @@ import { MapProvider } from './context/MapContext'; // 1. Import the MapProvider
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import MapView from './components/MapView';
+import Map from './pages/Map';
 import AlertsPanel from './components/AlertsPanel';
 import About from './pages/About';
 import ProfilePage from './pages/ProfilePage';
@@ -13,7 +13,7 @@ import VipSignup from './pages/VipSignup';
 import VerifyAlertsPage from './pages/VerifyAlertsPage';
 import AdminRoute from './components/AdminRoute';
 import FamilyPage from './pages/FamilyPage';
-import FamilyTracker from './components/FamilyTracker';
+import FamilyTrackerPage from './pages/FamilyTracker';
 
 const AppContent = () => {
     const { isAuthReady } = useAuth();
@@ -26,14 +26,14 @@ const AppContent = () => {
             <main className="flex-grow">
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/map" element={<MapView />} />
+                    <Route path="/map" element={<Map />} />
                     <Route path="/alerts" element={<AlertsPanel />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/vip-signup" element={<VipSignup />} />
                     <Route path="/family" element={<FamilyPage />} />
-                    <Route path="/family-tracker" element={<FamilyTracker />} /> 
-                    <Route 
+                    <Route path="/family-tracker" element={<FamilyTrackerPage />} />
+                    <Route
                         path="/verify-alerts" 
                         element={
                             <AdminRoute>
