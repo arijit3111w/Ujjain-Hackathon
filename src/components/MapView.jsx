@@ -10,9 +10,10 @@ import {
   Navigation, MapPin, Car, Users, AlertTriangle, LocateFixed, Route, List,
   ArrowUp, ArrowUpRight, ArrowRight, ArrowDownRight, ArrowDown, ArrowDownLeft,
   ArrowLeft, ArrowUpLeft, CornerDownLeft, CornerDownRight, RefreshCw, ChevronRight,
-  RotateCcw, RotateCw, Crown, Shield, Clock, ChevronDown, ChevronUp, Settings
+  RotateCcw, RotateCw, Crown, Shield, Clock, ChevronDown, ChevronUp, Settings, Bus
 } from 'lucide-react';
 import staticImportantLocationsData from '../data/importantLocations.json';
+import shuttleServicesData from '../data/shuttleServices.json';
 import RamGhatImage from '../assets/Ram_Ghat.jpg';
 
 const localImagesMap = {
@@ -78,6 +79,15 @@ const userLocationIcon = L.divIcon({
   iconAnchor: [15, 15]
 });
 
+const shuttleStopIcon = L.divIcon({
+    html: `<div style="background-color: #9333ea; width: 25px; height: 25px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bus"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+           </div>`,
+    className: 'shuttle-stop-marker',
+    iconSize: [25, 25],
+    iconAnchor: [12, 12]
+});
+
 const MapView = () => {
   // Access authentication context
   const { userId, userRole, isAuthReady } = useAuth();
@@ -116,6 +126,7 @@ const MapView = () => {
   const [isRouting, setIsRouting] = useState(false);
   const [routeRequested, setRouteRequested] = useState(false);
   const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showShuttleService, setShowShuttleService] = useState(false);
   const [loadingLiveLocations, setLoadingLiveLocations] = useState(true);
   const [geolocationError, setGeolocationError] = useState(null);
 
@@ -533,6 +544,17 @@ const MapView = () => {
                 <span>{showHeatmap ? 'Hide Crowd' : 'Show Crowd'}</span>
               </button>
 
+              <button
+                  onClick={() => setShowShuttleService(!showShuttleService)}
+                  className={`w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${showShuttleService
+                      ? 'bg-purple-100 text-purple-700'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+              >
+                <Bus className="h-4 w-4" />
+                <span>{showShuttleService ? 'Hide Shuttles' : 'Show Shuttles'}</span>
+              </button>
+
               {/* VIP Routes Control - Show only to admin users */}
               {userRole === 'admin' && (
                   <button
@@ -690,6 +712,12 @@ const MapView = () => {
                     <span>VIP Routes (Restricted)</span>
                   </div>
               )}
+              {showShuttleService && (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-1 border-t-2 border-dashed border-purple-600"></div>
+                    <span>Shuttle Routes</span>
+                  </div>
+              )}
             </div>
           </div>
         </div>
@@ -705,6 +733,54 @@ const MapView = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='© OpenStreetMap contributors'
           />
+
+          {/* Shuttle Service Routes and Markers */}
+          {showShuttleService && shuttleServicesData.map(shuttle => (
+              <React.Fragment key={shuttle.id}>
+                <Polyline
+                    positions={shuttle.route}
+                    pathOptions={{ color: '#9333ea', weight: 5, opacity: 0.8, dashArray: '10, 10' }}
+                >
+                  <Popup>
+                    <div className="max-w-xs">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Bus className="h-5 w-5 text-purple-600" />
+                        <h4 className="font-semibold text-purple-800">{shuttle.name}</h4>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{shuttle.description}</p>
+                      <div className="text-xs text-gray-500 mb-3 space-y-1">
+                        <p><strong>Hours:</strong> {shuttle.operatingHours}</p>
+                        <p><strong>Frequency:</strong> {shuttle.frequency}</p>
+                        <p><strong>Fare:</strong> {shuttle.fare}</p>
+                      </div>
+                      <div className="border-t pt-2">
+                        <h5 className="text-sm font-semibold text-gray-800 mb-1">Upcoming Departures</h5>
+                        <ul className="text-xs text-gray-700 max-h-32 overflow-y-auto space-y-1">
+                          {shuttle.schedule.map((trip, index) => (
+                              <li key={index} className="flex justify-between items-center p-1 bg-gray-50 rounded">
+                                <span>{trip.departure} → {trip.arrival}</span>
+                                <span className={`font-medium ${trip.available > 10 ? 'text-green-600' : 'text-orange-600'}`}>
+                                  {trip.available} seats
+                                </span>
+                              </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </Popup>
+                </Polyline>
+                <Marker position={shuttle.startLocation.coords} icon={shuttleStopIcon}>
+                    <Popup>
+                        <div className="font-semibold text-sm">Start: {shuttle.startLocation.name}</div>
+                    </Popup>
+                </Marker>
+                <Marker position={shuttle.endLocation.coords} icon={shuttleStopIcon}>
+                    <Popup>
+                        <div className="font-semibold text-sm">End: {shuttle.endLocation.name}</div>
+                    </Popup>
+                </Marker>
+              </React.Fragment>
+          ))}
 
           {/* Important Location Markers */}
           {filteredImportantLocations.map((location) => (
