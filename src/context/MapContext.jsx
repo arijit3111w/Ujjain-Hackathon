@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { collection, onSnapshot, doc, setDoc, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, query, orderBy, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from './AuthContext';
 
@@ -195,119 +195,122 @@ export const MapProvider = ({ children }) => {
   }, [isAuthReady, userRole, userId, appId]);
 
   // Fetch and store individual VIP route
-  const fetchIndividualVipRoute = useCallback(async (routeId) => {
+const fetchIndividualVipRoute = useCallback(async (routeId) => {
     const routeDef = vipRouteDefinitions.find(r => r.id === routeId);
     if (!routeDef) return null;
 
-    // Set loading state
-    await updateVipRouteControl(routeId, { 
-      ...vipRouteControls[routeId], 
-      loading: true 
-    });
+    // Only update the 'loading' property
+    await updateVipRouteControl(routeId, { loading: true });
 
     try {
-      const url = `https://router.project-osrm.org/route/v1/driving/${routeDef.startPoint.coords[1]},${routeDef.startPoint.coords[0]};${routeDef.endPoint.coords[1]},${routeDef.endPoint.coords[0]}?overview=full&geometries=geojson`;
-      const response = await fetch(url);
-      const data = await response.json();
+        const url = `https://router.project-osrm.org/route/v1/driving/${routeDef.startPoint.coords[1]},${routeDef.startPoint.coords[0]};${routeDef.endPoint.coords[1]},${routeDef.endPoint.coords[0]}?overview=full&geometries=geojson`;
+        const response = await fetch(url);
+        const data = await response.json();
 
-      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        const routeCoordinates = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+            const route = data.routes[0];
+            const routeCoordinates = route.geometry.coordinates.map(coord => ({
+                lat: coord[1],
+                lng: coord[0]
+            }));
 
-        const enrichedRoute = {
-          ...routeDef,
-          coordinates: routeCoordinates,
-          distance: route.distance / 1000,
-          duration: route.duration / 60,
-          waitingTime: vipRouteControls[routeId].waitingTime,
-          lastUpdated: new Date(),
-          updatedBy: userId
-        };
+            // We use a functional update for setVipRouteControls to get the latest state
+            let latestWaitingTime = 15;
+            setVipRouteControls(currentControls => {
+                latestWaitingTime = currentControls[routeId]?.waitingTime || 15;
+                return currentControls;
+            });
 
-        // Store the active route in Firestore
-        const activeRouteRef = doc(db, `artifacts/${appId}/public/data/active_vip_routes`, routeId);
-        await setDoc(activeRouteRef, enrichedRoute);
+            const enrichedRoute = {
+                ...routeDef,
+                coordinates: routeCoordinates,
+                distance: route.distance / 1000,
+                duration: route.duration / 60,
+                waitingTime: latestWaitingTime,
+                lastUpdated: new Date(),
+                updatedBy: userId
+            };
 
-        return enrichedRoute;
-      }
+            const activeRouteRef = doc(db, `artifacts/${appId}/public/data/active_vip_routes`, routeId);
+            await setDoc(activeRouteRef, enrichedRoute);
+            return enrichedRoute;
+        }
     } catch (error) {
-      console.error(`Error fetching VIP route ${routeDef.name}:`, error);
+        console.error(`Error fetching VIP route ${routeDef.name}:`, error);
     } finally {
-      // Clear loading state
-      await updateVipRouteControl(routeId, { 
-        ...vipRouteControls[routeId], 
-        loading: false 
-      });
+        // Only update the 'loading' property
+        await updateVipRouteControl(routeId, { loading: false });
     }
 
     return null;
-  }, [vipRouteControls, updateVipRouteControl, userId, appId]);
+}, [updateVipRouteControl, userId, appId]);
 
   // Remove VIP route from active routes
-  const removeVipRoute = useCallback(async (routeId) => {
-    if (!isAuthReady || userRole !== 'admin') {
-      console.warn("Unauthorized attempt to remove VIP route");
-      return;
-    }
+  // In MapContext.jsx, replace the existing functions with these:
 
-    try {
-      // Remove from Firestore active routes
-      const activeRouteRef = doc(db, `artifacts/${appId}/public/data/active_vip_routes`, routeId);
-      await setDoc(activeRouteRef, { deleted: true, deletedAt: new Date() });
-      
-      // Update control state
-      await updateVipRouteControl(routeId, { active: false });
+// This function now properly deletes the route document.
+const removeVipRoute = useCallback(async (routeId) => {
+  if (!isAuthReady || userRole !== 'admin') {
+    console.warn("Unauthorized attempt to remove VIP route");
+    return;
+  }
+  try {
+    const activeRouteRef = doc(db, `artifacts/${appId}/public/data/active_vip_routes`, routeId);
+    await deleteDoc(activeRouteRef); // Use deleteDoc to remove it completely
+  } catch (error) {
+    console.error("Error removing VIP route:", error);
+  }
+}, [isAuthReady, userRole, appId]);
 
-    } catch (error) {
-      console.error("Error removing VIP route:", error);
-    }
-  }, [isAuthReady, userRole, updateVipRouteControl, appId]);
 
-  // Handle individual VIP route toggle
-  const handleVipRouteToggle = useCallback(async (routeId) => {
-    if (!isAuthReady || userRole !== 'admin') {
-      console.warn("Unauthorized attempt to toggle VIP route");
-      return;
-    }
+// This function is now cleaner and correctly calls the updated removeVipRoute.
+const handleVipRouteToggle = useCallback(async (routeId) => {
+  if (!isAuthReady || userRole !== 'admin') {
+    console.warn("Unauthorized attempt to toggle VIP route");
+    return;
+  }
 
-    const currentState = vipRouteControls[routeId];
+  const controlState = vipRouteControls[routeId];
 
-    if (currentState.active) {
-      // Deactivate route
-      await updateVipRouteControl(routeId, { active: false });
-      await removeVipRoute(routeId);
-    } else {
-      // Activate route
-      await updateVipRouteControl(routeId, { active: true });
-      await fetchIndividualVipRoute(routeId);
-    }
-  }, [vipRouteControls, updateVipRouteControl, removeVipRoute, fetchIndividualVipRoute, isAuthReady, userRole]);
-
+  // If the route is currently active, we deactivate it.
+  if (controlState.active) {
+    // First, update the control to show it's inactive
+    await updateVipRouteControl(routeId, { active: false });
+    // Then, remove the route from the active_vip_routes collection
+    await removeVipRoute(routeId);
+  } 
+  // If the route is inactive, we activate it.
+  else {
+    // First, update the control to show it's active
+    await updateVipRouteControl(routeId, { active: true });
+    // Then, fetch the route data and save it to active_vip_routes
+    await fetchIndividualVipRoute(routeId);
+  }
+}, [isAuthReady, userRole, vipRouteControls, updateVipRouteControl, removeVipRoute, fetchIndividualVipRoute]);
   // Handle waiting time change
   const handleWaitingTimeChange = useCallback(async (routeId, waitingTime) => {
     if (!isAuthReady || userRole !== 'admin') {
-      console.warn("Unauthorized attempt to change waiting time");
-      return;
+        console.warn("Unauthorized attempt to change waiting time");
+        return;
     }
 
     const time = Math.max(1, Math.min(120, parseInt(waitingTime) || 15));
-    await updateVipRouteControl(routeId, { 
-      ...vipRouteControls[routeId], 
-      waitingTime: time 
-    });
 
-    // Update existing active route if present
+    // Only update the 'waitingTime' property
+    await updateVipRouteControl(routeId, { waitingTime: time });
+
+    // Find the active route from the state
     const activeRoute = vipRoutes.find(route => route.id === routeId);
     if (activeRoute) {
-      const activeRouteRef = doc(db, `artifacts/${appId}/public/data/active_vip_routes`, routeId);
-      await setDoc(activeRouteRef, { 
-        ...activeRoute, 
-        waitingTime: time,
-        lastUpdated: new Date(),
-        updatedBy: userId
-      }, { merge: true });
+        const activeRouteRef = doc(db, `artifacts/${appId}/public/data/active_vip_routes`, routeId);
+        await setDoc(activeRouteRef, {
+            waitingTime: time,
+            lastUpdated: new Date(),
+            updatedBy: userId
+        }, { merge: true });
     }
-  }, [vipRouteControls, updateVipRouteControl, vipRoutes, isAuthReady, userRole, userId, appId]);
+}, [vipRoutes, updateVipRouteControl, isAuthReady, userRole, userId, appId]);
+
 
   // Get count of active VIP routes
   const activeVipRoutesCount = Object.values(vipRouteControls).filter(control => control.active).length;

@@ -270,8 +270,8 @@ const MapView = () => {
 
       watchId = navigator.geolocation.watchPosition(successHandler, errorHandler, {
         enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
+        timeout: 20000,
+        maximumAge: 6000
       });
 
       console.log("Geolocation watch started.");
@@ -883,7 +883,7 @@ const MapView = () => {
         {vipRoutes.map(route => (
           <Polyline
             key={route.id}
-            positions={route.coordinates}
+            positions={route.coordinates.map(p => [p.lat, p.lng])}
             pathOptions={{
               color: route.color,
               weight: 6,
@@ -902,7 +902,6 @@ const MapView = () => {
                   <p>From: {route.startPoint.name}</p>
                   <p>To: {route.endPoint.name}</p>
                   {route.distance && <p>Distance: {route.distance.toFixed(2)} km</p>}
-                  {route.duration && <p>Duration: {route.duration.toFixed(0)} min</p>}
                 </div>
                 {route.waitingTime && (
                   <div className="mb-2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs flex items-center justify-center space-x-1">

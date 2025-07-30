@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 import VipAuthModal from './VipAuthModal';
 import { useTranslation } from 'react-i18next'; // 1. Import useTranslation
+import logo from '../assets/logo.png'; // Assuming you have a logo image
 
 const Navbar = () => {
     const { t, i18n } = useTranslation(); // 2. Initialize the hook
@@ -81,9 +82,10 @@ const Navbar = () => {
                         {/* Logo and brand name */}
                         <div className="flex items-center">
                             <Link to="/" className="flex items-center space-x-3">
-                                <div className="bg-gradient-to-r from-violet-600 to-orange-500 p-2 rounded-lg">
-                                    <MapPin className="h-8 w-8 text-white" />
-                                </div>
+                               
+                                    {/* <MapPin className="h-8 w-8 text-white" /> */}
+                                    <img src={logo} alt="Logo" className="h-12 w-12" />
+                              
                                 <div>
                                     {/* USE t() function for translation */}
                                     <h1 className="text-xl font-bold text-gray-900">{t('kumbhShilp')}</h1>
