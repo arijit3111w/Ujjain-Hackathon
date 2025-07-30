@@ -45,7 +45,7 @@ const VipSignup = () => {
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
                     <div className="flex items-center space-x-3">
-                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-lg">
+                        <div className="bg-gradient-to-r from-amber-500 to-amber-500 p-2 rounded-lg">
                             <Crown className="h-6 w-6 text-white" />
                         </div>
                         <h2 className="text-xl font-bold text-gray-900">VIP Account Registration</h2>
@@ -75,7 +75,7 @@ const VipSignup = () => {
                         <div className="relative"><Key className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" /><input type="text" value={vipCode} onChange={(e) => setVipCode(e.target.value)} required className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Enter your exclusive VIP code" /></div>
                     </div>
 
-                    <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 rounded-lg font-medium hover:from-amber-600 hover:to-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2">
+                    <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-amber-500 to-amber-500 text-white py-3 rounded-lg font-medium hover:from-amber-600 hover:to-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2">
                         {loading ? 'Creating Account...' : 'Register as VIP'}
                         {!loading && <User className="h-5 w-5" />}
                     </button>

@@ -83,7 +83,7 @@ const ProfilePage = () => {
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
                 <div className="flex items-center justify-between p-6 border-b border-gray-200">
                     <div className="flex items-center space-x-3">
-                        <div className="bg-gradient-to-r from-violet-600 to-orange-500 p-2 rounded-lg">
+                        <div className="bg-gradient-to-r from-amber-600 to-amber-500 p-2 rounded-lg">
                             <User className="h-6 w-6 text-white" />
                         </div>
                         <h2 className="text-xl font-bold text-gray-900">Manage Profile</h2>
@@ -130,7 +130,7 @@ const ProfilePage = () => {
                                 value={localUsername}
                                 onChange={(e) => setLocalUsername(e.target.value)}
                                 required
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors"
                                 placeholder="Choose a unique username"
                             />
                         </div>
@@ -146,7 +146,7 @@ const ProfilePage = () => {
                                 value={localAddress}
                                 onChange={(e) => setLocalAddress(e.target.value)}
                                 rows="3"
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors resize-y"
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-colors resize-y"
                                 placeholder="Enter your address"
                             ></textarea>
                         </div>
@@ -155,7 +155,7 @@ const ProfilePage = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-violet-600 to-orange-500 text-white py-3 rounded-lg font-medium hover:from-violet-700 hover:to-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                        className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white py-3 rounded-lg font-medium hover:from-amber-700 hover:to-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     >
                         {loading ? 'Saving...' : 'Save Profile'}
                         {!loading && <Save className="h-5 w-5" />}

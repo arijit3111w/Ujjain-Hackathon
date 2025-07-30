@@ -37,7 +37,7 @@ const VerifyAlertsPage = () => {
         <div className="min-h-screen bg-gray-100 py-10">
             <div className="max-w-5xl mx-auto px-4">
                 <div className="flex items-center space-x-3 mb-6">
-                    <ShieldAlert className="h-8 w-8 text-violet-600" />
+                    <ShieldAlert className="h-8 w-8 text-amber-600" />
                     <h1 className="text-3xl font-bold text-gray-900">Verify User Alerts</h1>
                 </div>
                 <div className="bg-white rounded-lg shadow-md border border-gray-200">

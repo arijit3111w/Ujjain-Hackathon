@@ -1,39 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Navigation, Users, Shield, Clock, Phone } from 'lucide-react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import {
+  MapPin,
+  Navigation,
+  Users,
+  Shield,
+  Clock,
+  Phone
+} from 'lucide-react';
 
 const Home = () => {
+  useEffect(() => {
+    AOS.init({ duration: 1000, once: true });
+  }, []);
+
   const features = [
-    {
-      icon: <MapPin className="h-8 w-8" />,
-      title: 'Interactive Map',
-      description: 'Navigate through sacred ghats, temples, and facilities with our detailed interactive map.'
-    },
-    {
-      icon: <Navigation className="h-8 w-8" />,
-      title: 'Smart Routing',
-      description: 'Get optimal routes based on current crowd density and your pilgrim status.'
-    },
-    {
-      icon: <Users className="h-8 w-8" />,
-      title: 'Crowd Management',
-      description: 'Real-time crowd density information to help you plan your visits.'
-    },
-    {
-      icon: <Shield className="h-8 w-8" />,
-      title: 'VIP Services',
-      description: 'Special access and routing for VIP pilgrims and dignitaries.'
-    },
-    {
-      icon: <Clock className="h-8 w-8" />,
-      title: 'Live Updates',
-      description: 'Instant notifications about events, changes, and important announcements.'
-    },
-    {
-      icon: <Phone className="h-8 w-8" />,
-      title: '24/7 Support',
-      description: 'Round-the-clock assistance for all your pilgrimage needs.'
-    }
+    { icon: <MapPin className="h-8 w-8" />, title: 'Interactive Map', description: 'Navigate through sacred ghats, temples, and facilities with our detailed interactive map.' },
+    { icon: <Navigation className="h-8 w-8" />, title: 'Smart Routing', description: 'Get optimal routes based on current crowd density and your pilgrim status.' },
+    { icon: <Users className="h-8 w-8" />, title: 'Crowd Management', description: 'Real-time crowd density information to help you plan your visits.' },
+    { icon: <Shield className="h-8 w-8" />, title: 'VIP Services', description: 'Special access and routing for VIP pilgrims and dignitaries.' },
+    { icon: <Clock className="h-8 w-8" />, title: 'Live Updates', description: 'Instant notifications about events, changes, and important announcements.' },
+    { icon: <Phone className="h-8 w-8" />, title: '24/7 Support', description: 'Round-the-clock assistance for all your pilgrimage needs.' }
   ];
 
   const stats = [
@@ -44,46 +33,48 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen font-sans">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-violet-900 via-violet-800 to-orange-700 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              Welcome to <br />
-              <span className="text-orange-300">Simhastha Kumbh 2025</span>
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-violet-200 max-w-3xl mx-auto">
-              Your digital companion for a sacred journey. Navigate with confidence through 
-              the world's largest spiritual gathering in Ujjain.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/map"
-                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors shadow-lg"
-              >
-                Explore Interactive Map
-              </Link>
-              <Link
-                to="/alerts"
-                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white border border-white/30 px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
-              >
-                View Live Updates
-              </Link>
-            </div>
+      <div className="relative hero-section text-white overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-transparent"></div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 text-center">
+          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-white mb-6 drop-shadow-lg tracking-wide">
+            Welcome to <br />
+            <span className="text-amber-400 drop-shadow-xl">Simhastha Kumbh 2025</span>
+          </h1>
+          <p className="text-xl md:text-2xl mb-10 max-w-3xl mx-auto text-white/90">
+            Your digital companion for a sacred journey. Navigate with confidence through the world's largest spiritual gathering in Ujjain.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              to="/map"
+              className="bg-amber-500 hover:bg-amber-600 px-8 py-4 rounded-xl font-semibold text-lg shadow-xl transform hover:-translate-y-1 transition-all"
+            >
+              Explore Interactive Map
+            </Link>
+            <Link
+              to="/alerts"
+              className="bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-md px-8 py-4 rounded-xl font-semibold text-lg text-white shadow-lg transition-all hover:-translate-y-1"
+            >
+              View Live Updates
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Stats Section */}
-      <div className="bg-white py-16">
+      <div className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-violet-600 mb-2">{stat.number}</div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+              <div
+                key={index}
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
+                className="text-center hover:scale-105 transition duration-300"
+              >
+                <div className="text-4xl font-extrabold text-amber-600 mb-2">{stat.number}</div>
+                <div className="text-gray-700 text-lg font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -91,48 +82,35 @@ const Home = () => {
       </div>
 
       {/* Features Section */}
-      <div className="bg-gray-50 py-20">
+      <div className=" relative bg-gradient-to-b from-gray-50 to-white py-20">
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
+        <h3></h3><img src="/images/swastik.svg" className="swastik" />
+      </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Digital Solutions for Sacred Journey
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Leveraging technology to enhance your spiritual experience while preserving 
-              the sanctity of this ancient tradition.
+              Leveraging technology to enhance your spiritual experience while preserving the sanctity of this ancient tradition.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {features.map((feature, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                <div className="bg-gradient-to-r from-violet-600 to-orange-500 w-16 h-16 rounded-lg flex items-center justify-center text-white mb-4">
+              <div
+                key={index}
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
+                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:scale-[1.03] transition duration-300 border border-gray-200"
+              >
+                <div className="bg-gradient-to-r from-amber-600 to-amber-500 w-16 h-16 rounded-xl flex items-center justify-center text-white text-2xl mb-4 shadow-md">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600 text-base">{feature.description}</p>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-violet-600 to-orange-500 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Begin Your Sacred Journey Today
-          </h2>
-          <p className="text-xl text-violet-100 mb-8 max-w-2xl mx-auto">
-            Join millions of pilgrims in this divine celebration. Let technology guide 
-            your path while you focus on your spiritual journey.
-          </p>
-          <Link
-            to="/map"
-            className="bg-white text-violet-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors shadow-lg inline-flex items-center space-x-2"
-          >
-            <MapPin className="h-5 w-5" />
-            <span>Start Navigation</span>
-          </Link>
         </div>
       </div>
     </div>

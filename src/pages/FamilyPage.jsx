@@ -10,7 +10,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 // A helper component for loading states to avoid repetition.
 const FullPageLoader = ({ message }) => (
     <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center py-10">
-        <Loader2 className="h-10 w-10 animate-spin text-violet-500" />
+        <Loader2 className="h-10 w-10 animate-spin text-amber-500" />
         <p className="mt-4 text-lg text-gray-600">{message}</p>
     </div>
 );
@@ -214,7 +214,7 @@ const FamilyPage = () => {
                             <h1 className="text-3xl font-bold text-gray-800">{familyData.name}</h1>
                             <p className="text-gray-500 mt-2">Share this ID with your family to invite them.</p>
                             <div className="mt-4 flex justify-center items-center gap-2 bg-gray-100 p-3 rounded-lg max-w-sm mx-auto">
-                                <span className="font-mono text-lg text-violet-700 truncate">{familyData.id}</span>
+                                <span className="font-mono text-lg text-amber-700 truncate">{familyData.id}</span>
                                 <button onClick={copyToClipboard} className="p-2 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50" disabled={isSubmitting}>
                                     {isCopied ? <Check className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5 text-gray-500" />}
                                 </button>
@@ -230,7 +230,7 @@ const FamilyPage = () => {
                                             {member.role === 'admin' ? <ShieldCheck className="h-6 w-6 text-slate-500" /> : member.role === 'vip' ? <Crown className="h-6 w-6 text-amber-500" /> : <User className="h-6 w-6 text-gray-400" />}
                                             <span className="font-medium">{member.username || 'Unnamed User'}</span>
                                         </div>
-                                        {member.uid === familyData.creatorId && <span className="text-xs font-bold bg-violet-100 text-violet-700 px-2 py-1 rounded-full">CREATOR</span>}
+                                        {member.uid === familyData.creatorId && <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-full">CREATOR</span>}
                                     </div>
                                 ))}
                             </div>
@@ -247,10 +247,10 @@ const FamilyPage = () => {
                     // VIEW WHEN USER IS NOT IN A FAMILY
                     <div className="grid md:grid-cols-2 gap-8">
                         <div className="bg-white p-6 rounded-lg shadow-md border">
-                            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><PlusCircle className="text-violet-500"/> Create a Family</h2>
+                            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><PlusCircle className="text-amber-500"/> Create a Family</h2>
                             <form onSubmit={(e) => { e.preventDefault(); handleCreateFamily(); }} className="space-y-4">
-                                <input type="text" value={familyName} onChange={(e) => setFamilyName(e.target.value)} placeholder="Enter a name for your family" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-400" disabled={isSubmitting} />
-                                <button type="submit" disabled={isSubmitting} className="w-full bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700 flex justify-center items-center gap-2 disabled:bg-violet-400">
+                                <input type="text" value={familyName} onChange={(e) => setFamilyName(e.target.value)} placeholder="Enter a name for your family" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-400" disabled={isSubmitting} />
+                                <button type="submit" disabled={isSubmitting} className="w-full bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 flex justify-center items-center gap-2 disabled:bg-amber-400">
                                     {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Create'}
                                 </button>
                             </form>

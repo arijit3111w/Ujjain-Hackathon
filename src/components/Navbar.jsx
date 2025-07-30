@@ -76,11 +76,11 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="bg-white shadow-lg border-b-4 border-violet-500 font-inter">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-20">
+            <nav className="bg-white shadow-lg font-inter">
+                <div className="max-w-8xl px-3 sm:px-3 lg:my-2">
+                    <div className="flex justify-evenly h-20">
                         {/* Logo and brand name */}
-                        <div className="flex items-center">
+                        <div className="flex">
                             <Link to="/" className="flex items-center space-x-3">
                                
                                     {/* <MapPin className="h-8 w-8 text-white" /> */}
@@ -95,13 +95,13 @@ const Navbar = () => {
                         </div>
 
                         {/* Desktop Navigation links */}
-                        <div className="hidden md:flex items-center space-x-8">
-                           {navigation.map((item) => ( <Link key={item.name} to={item.href} className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.current ? 'bg-violet-100 text-violet-700' : 'text-gray-700 hover:text-violet-600 hover:bg-gray-50' }`} > {item.name} </Link> ))}
+                        <div className="hidden md:flex items-center space-x-8 mx-9">
+                           {navigation.map((item) => ( <Link key={item.name} to={item.href} className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.current ? 'bg-amber-100 text-amber-600' : 'text-amber-600  hover:bg-gray-50' }`} > {item.name} </Link> ))}
                         </div>
 
                         {/* Desktop Auth & Controls */}
-                        <div className="hidden md:flex items-center space-x-4">
-                            <button onClick={handleLanguageToggle} className="px-3 py-1 w-12 rounded-md bg-orange-100 text-orange-700 text-sm font-medium hover:bg-orange-200">
+                        <div className="hidden md:flex items-center space-x-4 mx-9">
+                            <button onClick={handleLanguageToggle} className="px-3 py-1 w-12 rounded-md bg-amber-100 text-amber-700 text-sm font-medium hover:bg-amber-200">
                                 {i18n.language === 'en' ? 'हिं' : 'EN'}
                             </button>
 
@@ -111,7 +111,7 @@ const Navbar = () => {
                                     <button
                                         onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                                         className={`flex items-center space-x-2 px-4 py-2 rounded-md text-white transition-colors ${
-                                            isAdmin ? 'bg-slate-700 hover:bg-slate-800' : isVip ? 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500' : 'bg-violet-600 hover:bg-violet-700'
+                                            isAdmin ? 'bg-slate-700 hover:bg-slate-800' : isVip ? 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500' : 'bg-amber-600 hover:bg-amber-700'
                                         }`}
                                     >
                                         {isAdmin ? <ShieldCheck className="h-4 w-4" /> : isVip ? <Crown className="h-4 w-4" /> : <User className="h-4 w-4" />}
@@ -120,7 +120,7 @@ const Navbar = () => {
                                     {isUserDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 border">
                                             {isAdmin && (
-                                                <Link to="/verify-alerts" onClick={() => setIsUserDropdownOpen(false)} className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-violet-600 hover:bg-gray-100">
+                                                <Link to="/verify-alerts" onClick={() => setIsUserDropdownOpen(false)} className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-amber-600 hover:bg-gray-100">
                                                     <ShieldAlert className="h-4 w-4" /><span>{t('verifyAlerts')}</span>
                                                 </Link>
                                             )}
@@ -136,7 +136,7 @@ const Navbar = () => {
                             ) : (
                                 // Auth Dropdown for non-logged-in users
                                 <div className="relative" ref={authDropdownRef}>
-                                    <button onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)} className="flex items-center space-x-2 px-4 py-2 rounded-md bg-violet-600 text-white hover:bg-violet-700">
+                                    <button onClick={() => setIsAuthDropdownOpen(!isAuthDropdownOpen)} className="flex items-center space-x-2 px-4 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700">
                                         <User className="h-4 w-4" /><span>{t('login')}</span><ChevronDown className="h-4 w-4" />
                                     </button>
                                     {isAuthDropdownOpen && (
@@ -154,7 +154,7 @@ const Navbar = () => {
                         </div>
                          {/* Mobile menu button */}
                         <div className="md:hidden flex items-center">
-                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-gray-700 hover:text-violet-600">
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-gray-700 hover:text-amber-600">
                                 {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                             </button>
                         </div>
@@ -165,7 +165,7 @@ const Navbar = () => {
                 {isMenuOpen && (
                     <div className="md:hidden border-t bg-white">
                         <div className="px-2 pt-2 pb-3 space-y-1">
-                            {navigation.map((item) => ( <Link key={item.name} to={item.href} className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${item.current ? 'bg-violet-100 text-violet-700' : 'text-gray-700 hover:bg-gray-50'}`} onClick={() => setIsMenuOpen(false)} > {item.name} </Link> ))}
+                            {navigation.map((item) => ( <Link key={item.name} to={item.href} className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${item.current ? 'bg-amber-100 text-amber-700' : 'text-gray-700 hover:bg-gray-50'}`} onClick={() => setIsMenuOpen(false)} > {item.name} </Link> ))}
                             <div className="border-t pt-4 mt-4 space-y-2">
                                 {showAuthenticatedUserInfo ? (
                                     <>
@@ -176,7 +176,7 @@ const Navbar = () => {
                                             <span>{getDisplayName()}</span>
                                         </div>
                                         {isAdmin && (
-                                            <Link to="/verify-alerts" onClick={() => setIsMenuOpen(false)} className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-violet-600 hover:bg-gray-50">
+                                            <Link to="/verify-alerts" onClick={() => setIsMenuOpen(false)} className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-amber-600 hover:bg-gray-50">
                                                 <ShieldAlert className="h-5 w-5" />
                                                 <span>Verify Alerts</span>
                                             </Link>

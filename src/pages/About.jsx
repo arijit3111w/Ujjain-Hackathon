@@ -25,9 +25,9 @@ const About = () => {
               while preserving the sanctity and tradition of this millennia-old celebration.
             </p>
           </div>
-          <div className="bg-gradient-to-r from-violet-600 to-orange-500 rounded-xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-6">Key Information</h3>
-            <div className="space-y-4">
+          <div className="bg-gradient-to-r from-amber-600 to-amber-500 rounded-xl p-8 text-white">
+            <h3 className="text-2xl font-bold mb-6 text-shadow">Key Information</h3>
+            <div className="space-y-4 text-shadow-lighter">
               <div className="flex items-center space-x-3">
                 <Calendar className="h-5 w-5" />
                 <span>Duration: 48 Days of Sacred Celebration</span>
@@ -52,15 +52,15 @@ const About = () => {
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Digital Initiative</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="bg-violet-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="h-8 w-8 text-violet-600" />
+              <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="h-8 w-8 text-amber-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Navigation</h3>
               <p className="text-gray-600">Advanced mapping technology to guide pilgrims safely through the vast gathering.</p>
             </div>
             <div className="text-center">
-              <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-orange-600" />
+              <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-amber-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Crowd Management</h3>
               <p className="text-gray-600">Real-time monitoring to ensure safety and smooth flow of pilgrims.</p>
@@ -80,7 +80,7 @@ const About = () => {
           <p className="text-xl text-gray-600 mb-8">
             Committed to providing world-class facilities and digital infrastructure for all pilgrims.
           </p>
-          <div className="bg-gradient-to-r from-violet-600 to-orange-500 text-white rounded-lg p-6 inline-block">
+          <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white rounded-lg p-6 inline-block text-shadow-lighter">
             <p className="font-semibold">For support and inquiries:</p>
             <p className="text-lg">Helpline: 1800-XXX-XXXX</p>
             <p>Email: support@simhastha.mp.gov.in</p>

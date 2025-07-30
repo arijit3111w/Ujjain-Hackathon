@@ -1,0 +1,37 @@
+.hero-section {
+    background: url('./images/kumbh1.png') no-repeat bottom center;
+    background-size: cover;
+    position: relative;
+}
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1); /* darker = higher alpha */
+    z-index: 1;
+}
+
+.hero-section > * {
+    position: relative;
+    z-index: 2;
+}
+
+.text-shadow{
+    text-shadow: 1px 1px 5px rgb(0, 0, 0);
+}
+
+.text-shadow-lighter{
+    text-shadow: 0.5px 0.5px 4px rgb(0, 0, 0);
+}
+
+.swastik{
+    width:40px;
+    height:40px
+}
+@media (max-width: 600px) {
+  .hero-section h1 {
+    font-size: 1.5rem;
+  }
+}
