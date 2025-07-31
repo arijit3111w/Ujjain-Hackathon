@@ -12,7 +12,7 @@
     "type": "temple",
     "coords": [23.18278, 75.76833],
     "description": "This ancient temple houses one of the twelve Jyotirlingas, revered as the most sacred abodes of Lord Shiva. It's believed to be self-manifested (svayambhu).",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Mahakaleshwar_Temple_Ujjain.jpg",
+    "imageKey": "MahakaleshwarTemple",
     "vipAccess": false
   },
   {
@@ -20,7 +20,7 @@
     "type": "temple",
     "coords": [23.184544, 75.76475],
     "description": "A historic temple dedicated to Goddess Harsiddhi, a powerful form of Annapurna. It is one of the 51 Shakti Peeths, significant for devotees seeking divine blessings.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Harsiddhi_Temple%2C_Ujjain.jpg",
+    "imageKey": "HarsiddhiTemple",
     "vipAccess": false
   },
   {
@@ -28,7 +28,7 @@
     "type": "ghat",
     "coords": [23.12889, 75.79306],
     "description": "The sacred confluence of three rivers: Shipra, Saraswati (mythical), and Khan. It's a major bathing spot during Snan days and offers a serene atmosphere.",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Triveni_Ghat_Rishikesh.jpg/1280px-Triveni_Ghat_Rishikesh.jpg",
+    "imageKey": "TriveniGhat",
     "vipAccess": false
   },
   {

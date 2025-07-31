@@ -15,9 +15,18 @@ import {
 import staticImportantLocationsData from '../data/importantLocations.json';
 import shuttleServicesData from '../data/shuttleServices.json';
 import RamGhatImage from '../assets/Ram_Ghat.jpg';
+import MahakaleshwarTempleImage from '../assets/Mahakaleshwar_Temple.jpg';
+import HarsiddhiTempleImage from '../assets/Harsiddhi_Temple.jpg';
+import BhartrihariCavesImage from '../assets/Bhartrihari_Caves.webp';
+import TriveniGhatImage from '../assets/Triveni_Ghat.webp';
 
 const localImagesMap = {
   RamGhat: RamGhatImage,
+    MahakaleshwarTemple: MahakaleshwarTempleImage,
+    HarsiddhiTemple: HarsiddhiTempleImage,
+    BhartrihariCaves: BhartrihariCavesImage,
+    TriveniGhat: TriveniGhatImage
+
 };
 
 // Define potential crowd hotspot zones with a threshold for congestion
