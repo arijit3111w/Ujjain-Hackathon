@@ -116,7 +116,7 @@ const Navbar = () => {
                                         <button
                                             onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                                             className={`flex items-center space-x-2 px-4 py-2 rounded-md text-white transition-colors ${
-                                                isAdmin ? 'bg-slate-700 hover:bg-slate-800' : isVip ? 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500' : 'bg-amber-600 hover:bg-amber-700'
+                                                isAdmin ? 'bg-slate-700 hover:bg-slate-800' : isVip ? 'bg-amber-600  hover:bg-amber-500 ' : 'bg-amber-600 hover:bg-amber-700'
                                             }`}
                                         >
                                             {isAdmin ? <ShieldCheck className="h-4 w-4" /> : isVip ? <Crown className="h-4 w-4" /> : <User className="h-4 w-4" />}
