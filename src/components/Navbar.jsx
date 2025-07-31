@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MapPin, Menu, X, User, Settings, LogOut, ChevronDown, Crown, ShieldCheck, ShieldAlert } from 'lucide-react'; 
+import { MapPin, Menu, X, User, Settings, LogOut, ChevronDown, Crown, ShieldCheck, ShieldAlert, Users, ScrollText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 import VipAuthModal from './VipAuthModal';
@@ -31,6 +31,7 @@ const Navbar = () => {
         { name: t('map'), href: '/map', current: location.pathname === '/map' },
         { name: t('alerts'), href: '/alerts', current: location.pathname === '/alerts' },
         { name: t('about'), href: '/about', current: location.pathname === '/about' },
+        { name: t('Know-more'), href: '/tales', current: location.pathname === '/tales' },
     ];
 
     const navigation = showAuthenticatedUserInfo 
@@ -157,7 +158,7 @@ const Navbar = () => {
 
                 {/* Mobile Navigation - Slide in from right, half screen, visually appealing */}
                 {isMenuOpen && (
-                    <div className="fixed inset-0 z-40 flex justify-end md:hidden">
+                    <div className="absolute inset-0 z-50 flex justify-end md:hidden">
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-black bg-opacity-40" onClick={() => setIsMenuOpen(false)}></div>
                         {/* Menu Panel */}
@@ -179,8 +180,9 @@ const Navbar = () => {
                                             {item.name === t('map') && <ShieldCheck className="h-4 w-4 text-blue-400" />}
                                             {item.name === t('alerts') && <ShieldAlert className="h-4 w-4 text-red-400" />}
                                             {item.name === t('about') && <User className="h-4 w-4 text-gray-400" />}
-                                            {item.name === t('family') && <Crown className="h-4 w-4 text-amber-400" />}
+                                            {item.name === t('family') && <Users className="h-4 w-4 text-amber-400" />}
                                             {item.name === t('familyTracker') && <Settings className="h-4 w-4 text-green-400" />}
+                                            {item.name === t('Know-more') && <ScrollText className="h-4 w-4 text-amber-800" />}
                                             <span>{item.name}</span>
                                         </Link>
                                         {idx < navigation.length - 1 && <hr className="border-t border-amber-100 mx-2" />}
