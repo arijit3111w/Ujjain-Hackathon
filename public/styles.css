@@ -1,3 +1,8 @@
+/* Removes all borders from elements */
+.no-border {
+    border: none !important;
+    box-shadow: none !important;
+}
 .hero-section {
     background: url('./images/kumbh1.png') no-repeat bottom center;
     background-size: cover;

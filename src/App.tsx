@@ -14,6 +14,7 @@ import VerifyAlertsPage from './pages/VerifyAlertsPage';
 import AdminRoute from './components/AdminRoute';
 import FamilyPage from './pages/FamilyPage';
 import FamilyTrackerPage from './pages/FamilyTracker';
+import Tales from './components/tales.jsx'
 
 const AppContent = () => {
     const { isAuthReady } = useAuth();
@@ -33,6 +34,7 @@ const AppContent = () => {
                     <Route path="/vip-signup" element={<VipSignup />} />
                     <Route path="/family" element={<FamilyPage />} />
                     <Route path="/family-tracker" element={<FamilyTrackerPage />} />
+                    <Route path="/tales" element={<Tales />} />
                     <Route
                         path="/verify-alerts" 
                         element={
