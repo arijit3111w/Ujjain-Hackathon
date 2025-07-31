@@ -48,13 +48,13 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               to="/map"
-              className="bg-amber-500 hover:bg-amber-600 px-8 py-4 rounded-xl font-semibold text-lg shadow-xl transform hover:-translate-y-1 transition-all"
+              className="bg-amber-500 hover:bg-amber-600 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-xl transform hover:-translate-y-1 transition-all no-underline hover:no-underline"
             >
               Explore Interactive Map
             </Link>
             <Link
               to="/alerts"
-              className="bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-md px-8 py-4 rounded-xl font-semibold text-lg text-white shadow-lg transition-all hover:-translate-y-1"
+              className="bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-md px-8 py-4 rounded-xl font-semibold text-lg text-white shadow-lg transition-all hover:-translate-y-1 no-underline hover:no-underline"
             >
               View Live Updates
             </Link>

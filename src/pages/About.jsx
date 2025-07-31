@@ -25,7 +25,7 @@ const About = () => {
               while preserving the sanctity and tradition of this millennia-old celebration.
             </p>
           </div>
-          <div className="bg-gradient-to-r from-amber-600 to-amber-500 rounded-xl p-8 text-white">
+          <div className="bg-amber-600  rounded-xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-6 text-shadow">Key Information</h3>
             <div className="space-y-4 text-shadow-lighter">
               <div className="flex items-center space-x-3">
@@ -80,7 +80,7 @@ const About = () => {
           <p className="text-xl text-gray-600 mb-8">
             Committed to providing world-class facilities and digital infrastructure for all pilgrims.
           </p>
-          <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white rounded-lg p-6 inline-block text-shadow-lighter">
+          <div className="bg-amber-600 text-white rounded-lg p-6 inline-block text-shadow-lighter">
             <p className="font-semibold">For support and inquiries:</p>
             <p className="text-lg">Helpline: 1800-XXX-XXXX</p>
             <p>Email: support@simhastha.mp.gov.in</p>

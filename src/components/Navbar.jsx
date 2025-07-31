@@ -82,11 +82,11 @@ const Navbar = () => {
                     <div className="flex items-center justify-between h-20">
                         {/* Logo and brand name - always left */}
                         <div className="flex items-center">
-                            <Link to="/" className="flex items-center space-x-3">
+                            <Link to="/" className="flex items-center space-x-3 no-underline hover:no-underline">
                                 <img src={logo} alt="Logo" className="h-12 w-12" />
                                 <div>
-                                    <h1 className="text-xl font-bold text-gray-900">{t('kumbhShilp')}</h1>
-                                    <p className="text-sm text-gray-600">{t('navigationPortal')}</p>
+                                    <h1 className="text-xl font-bold text-amber-600 ">{t('kumbhShilp')}</h1>
+                                    <p className="text-sm text-amber-700 ">{t('navigationPortal')}</p>
                                 </div>
                             </Link>
                         </div>
@@ -94,7 +94,17 @@ const Navbar = () => {
                         <div className="flex items-center">
                             <div className="hidden md:flex items-center space-x-8 mx-9">
                                 {navigation.map((item) => (
-                                    <Link key={item.name} to={item.href} className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${item.current ? 'bg-amber-100 text-amber-600' : 'text-amber-600  hover:bg-gray-50'}`}>{item.name}</Link>
+                                <Link
+                                key={item.name}
+                                to={item.href}
+                                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors no-underline hover:no-underline ${
+                                    item.current
+                                    ? 'bg-amber-200 text-amber-600 hover:bg-amber-100 hover:text-amber-600'
+                                    : 'text-amber-600 hover:bg-amber-100 hover:text-amber-600'
+                                }`}
+                                >
+                                {item.name}
+                                </Link>
                                 ))}
                             </div>
                             <div className="hidden md:flex items-center space-x-4 mx-9">
@@ -175,7 +185,7 @@ const Navbar = () => {
                             <div className="flex flex-col mb-6">
                                 {navigation.map((item, idx) => (
                                     <React.Fragment key={item.name}>
-                                        <Link to={item.href} className={`flex items-center gap-3 px-4 py-3 rounded-md text-base font-semibold transition-colors ${item.current ? 'text-amber-700 bg-amber-50 border-l-4 border-kumbh-orange' : 'text-amber-600 hover:text-kumbh-orange'}`} onClick={() => setIsMenuOpen(false)}>
+                                        <Link to={item.href} className={`flex items-center gap-3 px-4 py-3 rounded-md text-base font-semibold transition-colors no-underline hover:no-underline ${item.current ? 'text-amber-700 bg-amber-50 border-l-4 border-kumbh-orange' : 'text-amber-600 hover:text-kumbh-orange'}`} onClick={() => setIsMenuOpen(false)}>
                                             {item.name === t('home') && <MapPin className="h-4 w-4 text-kumbh-orange" />}
                                             {item.name === t('map') && <ShieldCheck className="h-4 w-4 text-blue-400" />}
                                             {item.name === t('alerts') && <ShieldAlert className="h-4 w-4 text-red-400" />}
